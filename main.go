@@ -261,6 +261,8 @@ func getHTMLVersion(doc *html.Node) {
 
 func hasLogin(url string) {
 
+	var loginType string
+
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		panic("Something is WRONG")
@@ -269,31 +271,20 @@ func hasLogin(url string) {
 
 	//NEEDS better Solution
 	//created two types of potential Login id or class on an potential HTML
-	classInput := []string{".login", "./login", ".log in", ".log_in", ".signup", ".sign_up", ".signin", ".sign_in", ".auth"}
-	idInput := []string{"#login", "#log_in", "#signup", "#sign_up", "#signin", "#sign_in", "#auth"}
+	inputs := []string{".login", "./login", ".log in", ".log_in", ".signup", ".sign_up", ".signin", ".sign_in", ".auth", "#login", "#log_in", "#signup", "#sign_up", "#signin", "#sign_in", "#auth"}
+
 	// use CSS selector found with the browser inspector
 	// for each, use index and item
-	for _, v := range classInput {
-		doc.Find(v).Each(func(index int, item *goquery.Selection) {
-			classType := item.Text()
-			if classType != "" {
-				fmt.Println("- This page has a login form with class name: ", classType)
-			} else {
-				fmt.Println("- This page does not have a login form")
-			}
+	for _, v := range inputs {
+		// fmt.Println("THIS IS V", v)
+		doc.Find("body").Each(func(index int, item *goquery.Selection) {
+			loginType = item.Find(v).Text()
 		})
 	}
-	// Now we check if there is an ID of LOGIN types
-	for _, k := range idInput {
-		doc.Find(k).Each(func(index int, i *goquery.Selection) {
-			idType := i.Text()
-			if idType != "" {
-				fmt.Println("- This page has a login form with id name: ", idType)
-			} else {
-				fmt.Println("- This page does not have a login form")
-			}
-		})
+	if loginType != "" {
+		fmt.Println("- This page has a login form with id name: ", loginType)
+	} else {
+		fmt.Println("- This page does not have a login form")
 	}
 
 }
-
